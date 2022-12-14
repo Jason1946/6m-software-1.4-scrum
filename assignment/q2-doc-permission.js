@@ -19,57 +19,100 @@
         d.process(); // "Allowed"
 */
 
-class Permission{
-
+class Permission {
     // These are static constants that show what are the possible values when checking permission.
     static OperationsConst = {
-        CREATE:"CREATE",
-        READ:"READ",
-        UPDATE:"UPDATE",
-        DELETE:"DELETE"
-    }
+      CREATE: 'CREATE',
+      READ: 'READ',
+      UPDATE: 'UPDATE',
+      DELETE: 'DELETE',
+    };
     static RolesConst = {
-        OWNER:"OWNER",
-        EDITOR:"EDITOR",
-        READER:"READER"
-    }
-
+      OWNER: 'OWNER',
+      EDITOR: 'EDITOR',
+      READER: 'READER',
+    };
+  
     // private variables
     #role;
     #operation;
-
+  
+    public;
+  
     // constructor
-    constructor(role, operation){
-        if(this.constructor.name === "Permission"){
-            throw new Error("This class cannot be instantiated");
-        }
-        this.#role = role;
-        this.#operation = operation
+    constructor(role, operation) {
+      if (this.constructor.name === 'Permission') {
+        throw new Error('This class cannot be instantiated');
+      }
+      this.#role = role;
+      this.#operation = operation;
+      console.log('Permission: Constructor Permission..', role, operation);
+      console.log('  Private variable..', this.#role, this.#operation);
     }
-
+  
     // function
     check(){
         
-        const ops = this.#operation.toUpperCase();
+      const ops = this.#operation.toUpperCase();
 
-        switch(this.#role.toUpperCase()){
-            case Permission.RolesConst.OWNER:
-                return true;
-            case Permission.RolesConst.EDITOR:
-                if(ops === Permission.OperationsConst.READ || ops === Permission.OperationsConst.CREATE || ops === Permission.OperationsConst.UPDATE){
-                    return true;
-                }
-                return false;
-            case Permission.RolesConst.READER:
-                if(ops === Permission.OperationsConst.READ){
-                    return true;
-                }
-                return false;
-            default:
-                return false;
-                
-        }
-    }
+      switch(this.#role.toUpperCase()){
+          case Permission.RolesConst.OWNER:
+              return true;
+          case Permission.RolesConst.EDITOR:
+              if(ops === Permission.OperationsConst.READ || ops === Permission.OperationsConst.CREATE || ops === Permission.OperationsConst.UPDATE){
+                  return true;
+              }
+              return false;
+          case Permission.RolesConst.READER:
+              if(ops === Permission.OperationsConst.READ){
+                  return true;
+              }
+              return false;
+          default:
+              return false;
+              
+      }
+  }
 }
-
-// Add code here
+  
+  // Add code here
+  // const myPermission = new Permission('Editor'); // Create Permission object
+  // const yourPermission = new Permission('Subscriber'); // Create Permission object
+  
+  class Document extends Permission {
+  
+    // Private
+    #content;
+  
+    constructor(role, operation, content) {
+      super(role, operation);   // Call parent constructor with 2 parameters: role + operation
+      this.#content = content;  // Assign content to private variable
+    }
+    // Function (method)
+    process() {
+      console.log('Document: Calling process function...')
+      console.log(this.check());
+      }
+    
+  
+  }
+  
+   const myDocument = new Document('Editor', 'READ', 'Hello World!');  // Create Document object
+   console.log(myDocument.public_content);
+  
+  // Scenario 1:
+   const e = new Document(Permission.RolesConst.EDITOR, Permission.OperationsConst.UPDATE, "Hello content")
+   e.process(); // "Allowed"
+  
+  // Scenario 2:
+   const f = new Document(Permission.RolesConst.READER, Permission.OperationsConst.UPDATE, "Hello content")
+   f.process(); // "Blocked"
+  // Scenario 3:
+  const g = new Document(Permission.RolesConst.OWNER, Permission.OperationsConst.DELETE, "Hello content")
+  g.process(); // "Allowed"
+  
+  
+  // console.log(Permission.RoleConst.EDITOR);
+  
+   //const d = new Document(Permission.RolesConst.EDITOR, Permission.OperationsConst.UPDATE, "Hello content")
+   //d.process(); // "Allowed"
